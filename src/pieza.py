@@ -17,9 +17,9 @@ class Piece:
         self.texture = os.path.join(
             f'assets/images/imgs-{size}px/{self.name}-{self.color}.png')
         
-    def add_moves(self, move):
+    def add_move(self, move):
         self.moves.append(move)
-        
+
 
 class Peon(Piece):
 
