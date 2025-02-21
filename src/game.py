@@ -44,6 +44,8 @@ class Game:
             piece = self.drag.piece
 
             for move in piece.moves:
-                color = '#C84646' if (move.final.row + move.final.col) % 2 == 0 else '#C84646'
-                rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE)
-                pygame.draw.rect(surface, color, rect)
+                center_x = move.final.col * SQSIZE + SQSIZE // 2
+                center_y = move.final.row * SQSIZE + SQSIZE // 2
+                radius = SQSIZE // 4 
+                
+                pygame.draw.circle(surface, '#ff0000', (center_x, center_y), radius)

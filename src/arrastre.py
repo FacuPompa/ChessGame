@@ -29,7 +29,7 @@ class Drag:
     
     def save_initial(self, pos):
         self.initial_row = pos[1] // SQSIZE
-        self.initial_col = pos[1] // SQSIZE
+        self.initial_col = pos[0] // SQSIZE
 
     def drag_piece (self, piece):
         self.piece = piece
