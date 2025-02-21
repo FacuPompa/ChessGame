@@ -17,10 +17,7 @@ class Board:
                 self.squares[row][col] = Square(row, col)
 
     def _add_pieces(self, color):
-        if color == 'blanco':
-            row_peon, row_other = {6, 7}
-        else:
-            row_peon, row_other = {1, 0}
+        row_peon, row_other = (6, 7) if color == 'blanco' else (1, 0)
         
         # Peón
         for col in range (COLS):

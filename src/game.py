@@ -2,12 +2,14 @@ import pygame
 
 from const import *
 from tablero import Board
+from arrastre import Drag
 
 
 class Game:
 
     def __init__(self):
         self.board = Board()
+        self.drag = Drag()
 
 
 #muestra de methods
@@ -16,9 +18,9 @@ class Game:
         for row in range (ROWS):
             for col in range(COLS):
                 if (row + col) % 2 == 0:
-                    color = (255, 255, 255) #blancas
+                    color = (220, 188, 146) #blancas
                 else:
-                    color = (0, 0, 0)  #negras
+                    color = (176, 109, 59)  #negras
 
                 rect = (col * SQSIZE, row * SQSIZE, SQSIZE, SQSIZE)
 
@@ -30,7 +32,9 @@ class Game:
                 if self.board.squares[row][col].has_piece():
                     piece = self.board.squares[row][col].piece
 
-                    img = pygame.image.load(piece.texture)
-                    img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
-                    piece.texture_rect = img.get_rect(center=img_center)
-                    surface.blit(img, piece.texture_rect)
+                    if piece is not self.drag.piece:
+                        piece.set_texture(size=80)
+                        img = pygame.image.load(piece.texture)
+                        img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
+                        piece.texture_rect = img.get_rect(center=img_center)
+                        surface.blit(img, piece.texture_rect)
