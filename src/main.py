@@ -43,13 +43,16 @@ class Main:
                     #cuadrado tiene pieza?
                     if board.squares[clicked_row][clicked_col].has_piece():
                         piece = board.squares[clicked_row][clicked_col].piece
-                        board.calc_moves(piece, clicked_row, clicked_col)
-                        drag.save_initial(event.pos)
-                        drag.drag_piece(piece)
 
-                        game.show_bg(screen)
-                        game.show_moves(screen)
-                        game.show_pieces(screen)
+                        #pieza de color válida ?
+                        if piece.color == game.next_player:
+                            board.calc_moves(piece, clicked_row, clicked_col)
+                            drag.save_initial(event.pos)
+                            drag.drag_piece(piece)
+
+                            game.show_bg(screen)
+                            game.show_moves(screen)
+                            game.show_pieces(screen)
 
 
                 #movimiento mouse
@@ -75,11 +78,15 @@ class Main:
                         final = Square(realased_row, realased_col)
                         move = Move(initial, final)
                     
+                        #movimiento válido ?
                         if board.valid_move(drag.piece, move):
                             board.move(drag.piece, move)
 
                             game.show_bg(screen)
                             game.show_pieces(screen)
+
+                        #siguiente turno
+                            game.next_turn()
 
                     drag.undrag_piece()
 

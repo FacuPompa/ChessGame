@@ -8,6 +8,7 @@ from arrastre import Drag
 class Game:
 
     def __init__(self):
+        self.next_player = 'blanco'
         self.board = Board()
         self.drag = Drag()
 
@@ -49,3 +50,6 @@ class Game:
                 radius = SQSIZE // 4 
                 
                 pygame.draw.circle(surface, '#ff0000', (center_x, center_y), radius)
+    
+    def next_turn(self):
+        self.next_player = 'blanco' if self.next_player == 'negro' else 'negro'
