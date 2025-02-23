@@ -68,9 +68,9 @@ class Game:
                 color = theme.moves.light if (move.final.row + move.final.row) % 2 == 0 else theme.moves.dark
                 center_x = move.final.col * SQSIZE + SQSIZE // 2
                 center_y = move.final.row * SQSIZE + SQSIZE // 2
-                radius = SQSIZE // 4 
+                radius = SQSIZE // 6 
                 
-                pygame.draw.circle(surface, '#dd6262', (center_x, center_y), radius)
+                pygame.draw.circle(surface, '#717171' , (center_x, center_y), radius)
     
     def show_last_move (self, surface):
         theme = self.config.theme

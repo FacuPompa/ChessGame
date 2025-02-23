@@ -49,7 +49,7 @@ class Main:
 
                         #pieza de color válida ?
                         if piece.color == game.next_player:
-                            board.calc_moves(piece, clicked_row, clicked_col)
+                            board.calc_moves(piece, clicked_row, clicked_col, bool=True)
                             drag.save_initial(event.pos)
                             drag.drag_piece(piece)
 
@@ -91,6 +91,7 @@ class Main:
                         #movimiento válido ?
                         if board.valid_move(drag.piece, move):
                             board.move(drag.piece, move)
+
 
                             game.show_bg(screen)
                             game.show_last_move(screen)

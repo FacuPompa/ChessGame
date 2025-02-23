@@ -28,6 +28,7 @@ class Peon(Piece):
 
     def __init__(self, color):
         self.dir = -1 if color == 'blanco' else 1
+        self.paso = False
         super().__init__('peon', color, 1.0)
 
 
