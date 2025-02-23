@@ -1,10 +1,13 @@
 
 class Square:
 
+    APLHACOLS = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6:'g', 7:'h'}
+
     def __init__(self, row, col, piece=None):
         self.row = row
         self.col = col
         self.piece = piece
+        self.alphacol = self.APLHACOLS[col]
 
     
     def __eq__(self, other):
@@ -32,3 +35,8 @@ class Square:
             if arg < 0 or arg > 7:
                 return False
         return True
+
+    @staticmethod
+    def get_aplhacol(col):
+        APLHACOLS = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'F', 6:'G', 7:'H'}
+        return APLHACOLS[col]

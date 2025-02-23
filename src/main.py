@@ -24,8 +24,11 @@ class Main:
         
         while True:
             game.show_bg(screen)
+            game.show_last_move(screen)
             game.show_moves(screen)
             game.show_pieces(screen)
+
+            game.show_hover(screen)
 
 
             if drag.dragging:
@@ -57,11 +60,18 @@ class Main:
 
                 #movimiento mouse
                 if event.type == pygame.MOUSEMOTION:
+                    motion_row = event.pos[1] // SQSIZE
+                    motion_col = event.pos[0] // SQSIZE
+                    
+                    game.set_hover(motion_row, motion_col)
+
                     if drag.dragging:
                         drag.update_mouse(event.pos)
                         game.show_bg(screen)
+                        game.show_last_move(screen)
                         game.show_moves(screen)
                         game.show_pieces(screen)
+                        game.show_hover(screen)
                         drag.update_blit(screen)
 
                 #suelto click
@@ -83,6 +93,7 @@ class Main:
                             board.move(drag.piece, move)
 
                             game.show_bg(screen)
+                            game.show_last_move(screen)
                             game.show_pieces(screen)
 
                         #siguiente turno
@@ -91,7 +102,22 @@ class Main:
                     drag.undrag_piece()
 
 
-                
+                #tecla
+
+                elif event.type == pygame.KEYDOWN:
+                    
+                    #cambiar el color del tema
+                    if event.key == pygame.K_f:  
+                        game.change_theme()
+
+                    #reseteando
+                    if event.key == pygame.K_r:  
+                        game.reset()
+                        game = self.game
+                        board = self.game.board
+                        drag = self.game.drag
+
+
                 #salir
                 elif event.type == pygame.QUIT:
                     pygame.quit()

@@ -2,6 +2,7 @@ from const import *
 from square import Square
 from pieza import *
 from move import Move
+import copy
 
 class Board:
 
@@ -17,9 +18,21 @@ class Board:
         initial = move.initial
         final = move.final
 
-        #actualiza el movimiento en el tablero
+        #actualiza el movimiento
         self.squares[initial.row][initial.col].piece = None
         self.squares[final.row][final.col].piece = piece
+
+        #coronación de peón
+        if isinstance(piece, Peon):
+            self.check_promotion(piece, final)
+
+        #enroque
+
+        if isinstance(piece, Rey):
+            if self.enroque(initial, final):
+                diff = final.col - initial.col
+                torre = piece.torre_izquierda if (diff < 0) else piece.torre_derecha
+                self.move(torre, torre.moves[-1])
 
         #mueve
         piece.moved = True
@@ -32,8 +45,30 @@ class Board:
 
     def valid_move(self, piece, move):
         return move in piece.moves
+    
+    def check_promotion(self, piece, final):
+        if final.row == 0 or final.row == 7:
+            self.squares[final.row][final.col].piece = Reina(piece.color)
 
-    def calc_moves(self, piece, row, col):
+    def enroque(self, initial, final):
+        return abs(initial.col - final.col ) == 2
+    
+    def jaque(self, piece, move):
+        temp_piece = copy.deepcopy(piece)
+        temp_board = copy.deepcopy(self)
+        temp_board.move(temp_piece, move)
+
+        for row in range(ROWS):
+            for col in range(COLS):
+                if temp_board.squares[row][col].has_enemy(piece.color):
+                    p = temp_board.squares[row][col].piece
+                    temp_board.calc_moves(p, row, col)
+                    for m in p.moves:
+                        if isinstance(m.final.piece, Rey):
+                            return True
+        return False
+
+    def calc_moves(self, piece, row, col, bool=True): #movimientos posibles de todas las piezas
 
         def peon_moves():
             steps = 1 if piece.moved else 2
@@ -47,7 +82,10 @@ class Board:
                         initial = Square(row, col)
                         final = Square(possible_move_row, col)
                         move = Move(initial, final)
-                        piece.add_move(move)
+
+                        #chekea jaque
+                        if not self.jaque(piece, move):
+                            piece.add_move(move)
                     else: break#bloqueado 
                 else: break#sin rango
 
@@ -58,7 +96,8 @@ class Board:
                 if Square.in_range(possible_move_row, possible_move_col):
                     if self.squares[possible_move_row][possible_move_col].has_rival_piece(piece.color):
                         initial = Square(row, col)
-                        final = Square(possible_move_row, possible_move_col)
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row, possible_move_col, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
                 
@@ -81,8 +120,8 @@ class Board:
                     if self.squares[possible_move_row] [possible_move_col].isempty_rival(piece.color):
 
                         initial = Square(row, col)
-                        final = Square(possible_move_row, possible_move_col)
-
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row, possible_move_col, final_piece)
                         move = Move(initial, final)
                         piece.add_move(move)
         
@@ -96,17 +135,18 @@ class Board:
                     if Square.in_range(possible_move_row, possible_move_col):
 
                         initial = Square(row, col)
-                        final = Square(possible_move_row, possible_move_col)
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row, possible_move_col, final_piece)
                         move = Move(initial, final)
 
                         if self.squares[possible_move_row][possible_move_col].isempty():
                             piece.add_move(move)
 
-                        if self.squares[possible_move_row][possible_move_col].has_rival_piece(piece.color):
+                        elif self.squares[possible_move_row][possible_move_col].has_rival_piece(piece.color):
                             piece.add_move(move)
                             break
 
-                        if self.squares[possible_move_row][possible_move_col].has_team(piece.color):
+                        elif self.squares[possible_move_row][possible_move_col].has_team(piece.color):
                             break
                     
                     else: break
@@ -139,6 +179,31 @@ class Board:
                         piece.add_move(move)
             
             #enroque
+            if not piece.moved:
+
+                torre_derecha = self.squares[row][7].piece
+                if isinstance(torre_derecha, Torre):
+                    if not torre_derecha.moved:
+                        for c in range (5, 7):
+                            if self.squares[row][c].has_piece():
+                                break
+                            if c == 6:
+                                piece.torre_derecha = torre_derecha
+
+                                #movimiento torre
+                                initial = Square(row, 7)
+                                final = Square(row, 5)
+                                move = Move(initial, final)
+                                torre_derecha.add_move(move)
+
+                                #movimiento rey
+                                initial = Square(row, col)
+                                final = Square(row, 6)
+                                move = Move(initial, final)
+                                piece.add_move(move)
+
+
+
 
         if isinstance(piece, Peon):
             peon_moves()
@@ -146,6 +211,7 @@ class Board:
         elif isinstance (piece, Caballo):
 
             caballo_moves()
+        
         elif isinstance (piece, Alfil): straightline_moves([
             (-1, 1), #arriba derecha 
             (-1, -1), #arriba izquierda

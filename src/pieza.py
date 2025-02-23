@@ -58,4 +58,6 @@ class Reina(Piece):
 class Rey(Piece):
 
     def __init__(self, color):
+        self.torre_izquierda = None
+        self.torre_derecha = None
         super().__init__('rey', color, 1000.0)
